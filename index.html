@@ -7,36 +7,37 @@
 
 <style>
 :root{
-  --bg: #e8dfd2;
-  --paper: #f8f3ec;
-  --ink: #3a342c;
-  --accent: #b08d57;
-  --envelope: #efe7dc;
-  --envelope-dark: #e3d7c8;
+  --bg1:#d8cec0;
+  --bg2:#f2e9dd;
+  --paper:#f8f3ec;
+  --ink:#3b342b;
+  --gold1:#d6b97b;
+  --gold2:#8c6a3b;
 }
 
 body{
   margin:0;
   font-family: "Segoe UI", Arial, sans-serif;
   background:
-    radial-gradient(1000px 500px at 50% 10%, rgba(255,255,255,.75), transparent 60%),
-    linear-gradient(135deg, #d9cfbf, #f0e7dc 35%, #d6c9b7);
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.4), transparent 50%),
+    linear-gradient(135deg,var(--bg1),var(--bg2));
+  height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
-  height:100vh;
   overflow:hidden;
 }
 
+/* מעטפה */
 .scene{
-  width:420px;
-  perspective:1000px;
+  width:600px;
+  perspective:1400px;
 }
 
 .envelope{
   position:relative;
   width:100%;
-  height:260px;
+  height:360px;
   cursor:pointer;
   transform-style:preserve-3d;
 }
@@ -45,12 +46,11 @@ body{
   position:absolute;
   inset:0;
   background:
-    radial-gradient(rgba(0,0,0,.04) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(255,255,255,.4), rgba(0,0,0,.03));
-  background-size:4px 4px, 100% 100%;
-  background-color:var(--envelope);
-  border-radius:14px;
-  box-shadow:0 30px 80px rgba(0,0,0,.18);
+    radial-gradient(rgba(0,0,0,.04) 1px, transparent 1px);
+  background-size:4px 4px;
+  background-color:#efe7dc;
+  border-radius:12px;
+  box-shadow:0 40px 100px rgba(0,0,0,.25);
 }
 
 .flap{
@@ -58,66 +58,71 @@ body{
   top:0;
   left:0;
   right:0;
-  height:60%;
-  background:var(--envelope-dark);
+  height:55%;
+  background:#e3d7c8;
   clip-path: polygon(0 0, 100% 0, 50% 100%);
   transform-origin:top;
-  transition: transform 1s ease;
+  transition: transform 1.2s ease;
+  box-shadow: inset 0 -8px 20px rgba(0,0,0,.15);
 }
 
 .seal{
   position:absolute;
   left:50%;
-  top:60%;
+  top:62%;
   transform:translate(-50%,-50%);
-  width:75px;
-  height:75px;
+  width:90px;
+  height:90px;
   border-radius:50%;
-  background: radial-gradient(circle at 30% 30%, #d6b97b, #8c6a3b 75%);
+  background: radial-gradient(circle at 30% 30%, var(--gold1), var(--gold2) 75%);
   box-shadow:
-    0 15px 25px rgba(0,0,0,.25),
-    inset 0 4px 12px rgba(255,255,255,.35),
-    inset 0 -12px 18px rgba(0,0,0,.35);
+    0 20px 40px rgba(0,0,0,.35),
+    inset 0 6px 14px rgba(255,255,255,.35),
+    inset 0 -15px 25px rgba(0,0,0,.35);
   display:flex;
   align-items:center;
   justify-content:center;
   color:white;
+  font-size:28px;
   font-weight:bold;
-  font-size:22px;
+  transition:opacity .5s ease;
 }
 
 .letter{
   position:absolute;
-  width:90%;
-  left:5%;
-  top:20px;
+  width:85%;
+  left:7.5%;
+  top:30px;
   background:var(--paper);
-  border-radius:12px;
-  padding:20px;
+  border-radius:14px;
+  padding:30px;
   text-align:center;
-  transform:translateY(100px);
+  transform:translateY(120px);
   opacity:0;
-  transition:all 1s ease;
-  box-shadow:0 20px 40px rgba(0,0,0,.15);
+  transition:all 1.2s ease;
+  box-shadow:0 30px 60px rgba(0,0,0,.25);
 }
 
 .names{
-  font-size:28px;
+  font-size:36px;
   font-weight:bold;
 }
 
 .subtitle{
-  margin-top:5px;
+  margin-top:10px;
   color:#6a5a45;
+  font-size:18px;
 }
 
 .details{
-  margin-top:15px;
-  line-height:1.8;
+  margin-top:20px;
+  line-height:2;
+  font-size:18px;
 }
 
+/* פתיחה */
 .open .flap{
-  transform:rotateX(160deg);
+  transform:rotateX(170deg);
 }
 
 .open .letter{
@@ -125,25 +130,31 @@ body{
   opacity:1;
 }
 
-.invite-section{
-  position:absolute;
-  bottom:-100%;
-  width:100%;
-  background:var(--paper);
-  text-align:center;
-  padding:40px 20px;
-  transition:bottom 1s ease;
+.open .seal{
+  opacity:0;
 }
 
-.show-invite{
-  bottom:0;
-}
-
-.map{
-  width:100%;
-  height:300px;
-  border:0;
+/* כפתור חזרה */
+.close-btn{
   margin-top:20px;
+  padding:10px 20px;
+  background:#b08d57;
+  color:white;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:16px;
+}
+
+.map-section{
+  margin-top:20px;
+}
+
+iframe{
+  width:100%;
+  height:280px;
+  border:0;
+  margin-top:15px;
 }
 </style>
 </head>
@@ -152,44 +163,45 @@ body{
 
 <div class="scene">
   <div class="envelope" id="envelope">
+
     <div class="env-body"></div>
     <div class="flap"></div>
     <div class="seal">B</div>
 
     <div class="letter">
       <div class="names">בר & שיר</div>
-      <div class="subtitle">שמחים להזמינכם לחגוג איתנו</div>
+      <div class="subtitle">שמחים להזמינכם לחתונתנו</div>
 
       <div class="details">
         יום רביעי<br>
         20.05.2026<br>
         אולמי גבריאל, נס ציונה
       </div>
+
+      <div class="map-section">
+        <iframe
+        src="https://www.google.com/maps?q=אולמי+גבריאל+נס+ציונה&output=embed">
+        </iframe>
+      </div>
+
+      <button class="close-btn" onclick="closeEnvelope()">סגור מעטפה</button>
     </div>
+
   </div>
-</div>
-
-<div class="invite-section" id="invite">
-  <h1>בר & שיר</h1>
-  <h3>שמחים להזמינכם לחתונתנו</h3>
-  <p><strong>20.05.2026</strong></p>
-  <p>אולמי גבריאל, נס ציונה</p>
-
-  <iframe class="map"
-  src="https://www.google.com/maps?q=אולמי+גבריאל+נס+ציונה&output=embed">
-  </iframe>
 </div>
 
 <script>
 const envelope = document.getElementById("envelope");
-const invite = document.getElementById("invite");
 
-envelope.addEventListener("click", () => {
-  envelope.classList.add("open");
-  setTimeout(() => {
-    invite.classList.add("show-invite");
-  }, 1000);
+envelope.addEventListener("click", function(e){
+  if(!envelope.classList.contains("open")){
+    envelope.classList.add("open");
+  }
 });
+
+function closeEnvelope(){
+  envelope.classList.remove("open");
+}
 </script>
 
 </body>
