@@ -1,452 +1,196 @@
 <!doctype html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>הזמנה לחתונה</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>בר & שיר מתחתנים</title>
 
-  <style>
-    :root{
-      --bg: #fbf7f2;
-      --paper: #ffffff;
-      --ink: #2a2a2a;
-      --accent: #b4875a;
-      --shadow: 0 20px 60px rgba(0,0,0,.12);
-      --radius: 18px;
-    }
+<style>
+:root{
+  --bg: #e8dfd2;
+  --paper: #f8f3ec;
+  --ink: #3a342c;
+  --accent: #b08d57;
+  --envelope: #efe7dc;
+  --envelope-dark: #e3d7c8;
+}
 
-    *{ box-sizing: border-box; }
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Hebrew", sans-serif;
-      background: radial-gradient(1000px 500px at 50% 10%, #fff 0, var(--bg) 60%);
-      color: var(--ink);
-    }
+body{
+  margin:0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background:
+    radial-gradient(1000px 500px at 50% 10%, rgba(255,255,255,.75), transparent 60%),
+    linear-gradient(135deg, #d9cfbf, #f0e7dc 35%, #d6c9b7);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  overflow:hidden;
+}
 
-    .wrap{
-      min-height: 100svh;
-      display:grid;
-      place-items:center;
-      padding: 24px;
-    }
+.scene{
+  width:420px;
+  perspective:1000px;
+}
 
-    /* ===== Envelope Scene ===== */
-    .scene{
-      width: min(420px, 92vw);
-      position: relative;
-      perspective: 1000px;
-    }
+.envelope{
+  position:relative;
+  width:100%;
+  height:260px;
+  cursor:pointer;
+  transform-style:preserve-3d;
+}
 
-    .hint{
-      text-align:center;
-      margin: 0 0 14px 0;
-      opacity:.75;
-      font-size: 14px;
-    }
+.env-body{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(rgba(0,0,0,.04) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,.4), rgba(0,0,0,.03));
+  background-size:4px 4px, 100% 100%;
+  background-color:var(--envelope);
+  border-radius:14px;
+  box-shadow:0 30px 80px rgba(0,0,0,.18);
+}
 
-    .envelope-btn{
-      border:0;
-      padding:0;
-      background: transparent;
-      width: 100%;
-      cursor:pointer;
-      outline: none;
-    }
+.flap{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:60%;
+  background:var(--envelope-dark);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin:top;
+  transition: transform 1s ease;
+}
 
-    .envelope{
-      position: relative;
-      width: 100%;
-      height: 270px;
-      border-radius: var(--radius);
-      filter: drop-shadow(var(--shadow));
-      transform-style: preserve-3d;
-    }
+.seal{
+  position:absolute;
+  left:50%;
+  top:60%;
+  transform:translate(-50%,-50%);
+  width:75px;
+  height:75px;
+  border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, #d6b97b, #8c6a3b 75%);
+  box-shadow:
+    0 15px 25px rgba(0,0,0,.25),
+    inset 0 4px 12px rgba(255,255,255,.35),
+    inset 0 -12px 18px rgba(0,0,0,.35);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-weight:bold;
+  font-size:22px;
+}
 
-    .env-body{
-      position:absolute; inset:0;
-      background: #f0e4d7;
-      border-radius: var(--radius);
-      overflow:hidden;
-    }
+.letter{
+  position:absolute;
+  width:90%;
+  left:5%;
+  top:20px;
+  background:var(--paper);
+  border-radius:12px;
+  padding:20px;
+  text-align:center;
+  transform:translateY(100px);
+  opacity:0;
+  transition:all 1s ease;
+  box-shadow:0 20px 40px rgba(0,0,0,.15);
+}
 
-    /* back paper texture-ish */
-    .env-body:before{
-      content:"";
-      position:absolute; inset:0;
-      background:
-        radial-gradient(600px 200px at 50% 0%, rgba(255,255,255,.6), transparent 60%),
-        linear-gradient(135deg, rgba(255,255,255,.25), transparent 40%),
-        linear-gradient(0deg, rgba(0,0,0,.04), transparent 60%);
-      pointer-events:none;
-    }
+.names{
+  font-size:28px;
+  font-weight:bold;
+}
 
-    /* Envelope front triangles */
-    .env-front{
-      position:absolute; inset:0;
-      border-radius: var(--radius);
-      overflow:hidden;
-      pointer-events:none;
-    }
-    .tri-left, .tri-right{
-      position:absolute; bottom:0;
-      width: 55%;
-      height: 75%;
-      background: #ead8c7;
-      transform: skewX(-18deg);
-      transform-origin: bottom;
-      border-top: 1px solid rgba(0,0,0,.04);
-    }
-    .tri-left{ left:-10%; }
-    .tri-right{
-      right:-10%;
-      transform: skewX(18deg);
-      background:#e7d2bf;
-    }
-    .tri-bottom{
-      position:absolute; bottom:-2px; left:0; right:0;
-      height: 58%;
-      background: #e3ccb7;
-      clip-path: polygon(0 0, 50% 55%, 100% 0, 100% 100%, 0 100%);
-      border-top: 1px solid rgba(0,0,0,.06);
-    }
+.subtitle{
+  margin-top:5px;
+  color:#6a5a45;
+}
 
-    /* Flap */
-    .flap{
-      position:absolute;
-      top: 0;
-      left:0; right:0;
-      height: 62%;
-      background: #eddccf;
-      clip-path: polygon(0 0, 100% 0, 50% 100%);
-      transform-origin: top;
-      transform: rotateX(0deg);
-      transition: transform 900ms cubic-bezier(.2,.8,.2,1);
-      border-top-left-radius: var(--radius);
-      border-top-right-radius: var(--radius);
-    }
+.details{
+  margin-top:15px;
+  line-height:1.8;
+}
 
-    /* Wax seal */
-    .seal{
-      position:absolute;
-      left:50%;
-      top: 56%;
-      transform: translate(-50%,-50%);
-      width: 64px;
-      height: 64px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 30%, #d9a97a, #b07a4b 70%);
-      box-shadow: 0 10px 18px rgba(0,0,0,.18);
-      display:grid;
-      place-items:center;
-      color: #fff;
-      font-weight: 700;
-      letter-spacing: .5px;
-      border: 2px solid rgba(255,255,255,.35);
-      transition: transform 900ms cubic-bezier(.2,.8,.2,1), opacity 500ms ease;
-    }
-    .seal span{ font-size: 18px; }
+.open .flap{
+  transform:rotateX(160deg);
+}
 
-    /* Letter card hidden inside */
-    .letter{
-      position:absolute;
-      left: 50%;
-      top: 18px;
-      transform: translateX(-50%);
-      width: 92%;
-      height: 86%;
-      background: var(--paper);
-      border-radius: 14px;
-      box-shadow: 0 14px 30px rgba(0,0,0,.10);
-      border: 1px solid rgba(0,0,0,.06);
-      overflow:hidden;
+.open .letter{
+  transform:translateY(0);
+  opacity:1;
+}
 
-      /* start lower, then rise */
-      translate: 0 90px;
-      opacity: 0;
-      transition: translate 900ms cubic-bezier(.2,.8,.2,1), opacity 600ms ease;
-    }
+.invite-section{
+  position:absolute;
+  bottom:-100%;
+  width:100%;
+  background:var(--paper);
+  text-align:center;
+  padding:40px 20px;
+  transition:bottom 1s ease;
+}
 
-    .letter-inner{
-      height:100%;
-      padding: 20px 18px;
-      display:grid;
-      gap: 10px;
-      align-content:start;
-      text-align:center;
-    }
+.show-invite{
+  bottom:0;
+}
 
-    .names{
-      font-size: 28px;
-      font-weight: 700;
-      margin-top: 4px;
-    }
-    .subtitle{
-      opacity:.75;
-      font-size: 14px;
-      margin-top: -6px;
-    }
-    .divider{
-      width: 86px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      margin: 8px auto 6px;
-      border-radius: 99px;
-    }
-    .details{
-      display:grid;
-      gap: 8px;
-      font-size: 16px;
-      line-height: 1.45;
-    }
-    .details b{ color: #000; }
-    .pill{
-      display:inline-block;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(180,135,90,.12);
-      border: 1px solid rgba(180,135,90,.25);
-      color: #6a4a2e;
-      font-weight: 600;
-      font-size: 13px;
-      margin: 6px auto 0;
-    }
-    .cta-row{
-      display:flex;
-      gap: 10px;
-      justify-content:center;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
-    .btn{
-      appearance:none;
-      border: 0;
-      border-radius: 12px;
-      padding: 10px 14px;
-      font-weight: 700;
-      cursor:pointer;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      gap: 8px;
-    }
-    .btn.primary{
-      background: var(--accent);
-      color: #fff;
-      box-shadow: 0 10px 22px rgba(180,135,90,.25);
-    }
-    .btn.ghost{
-      background: rgba(0,0,0,.04);
-      color: #2a2a2a;
-      border: 1px solid rgba(0,0,0,.08);
-    }
-
-    /* Open state */
-    .open .flap{
-      transform: rotateX(160deg);
-    }
-    .open .seal{
-      transform: translate(-50%,-50%) scale(.86);
-      opacity: 0;
-    }
-    .open .letter{
-      translate: 0 0;
-      opacity: 1;
-    }
-
-    /* ===== Invite Section (below) ===== */
-    .invite{
-      width: min(820px, 92vw);
-      margin: 26px auto 70px;
-      display:none;
-      gap: 16px;
-    }
-    .invite.show{ display:grid; }
-
-    .card{
-      background: rgba(255,255,255,.82);
-      border: 1px solid rgba(0,0,0,.06);
-      border-radius: 20px;
-      box-shadow: 0 18px 45px rgba(0,0,0,.08);
-      overflow:hidden;
-    }
-    .card .pad{
-      padding: 18px 18px 6px;
-      text-align:center;
-    }
-    .h1{
-      font-size: 34px;
-      margin: 10px 0 4px;
-    }
-    .h2{
-      margin: 0 0 10px;
-      font-size: 16px;
-      opacity:.75;
-    }
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      padding: 0 18px 18px;
-    }
-    @media (min-width: 820px){
-      .grid{ grid-template-columns: 1.2fr .8fr; align-items:start; }
-    }
-
-    .info{
-      text-align:right;
-      padding: 16px;
-      border-radius: 16px;
-      background: rgba(180,135,90,.08);
-      border: 1px solid rgba(180,135,90,.18);
-      line-height: 1.8;
-      font-size: 16px;
-    }
-    .info .row{
-      display:flex;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 6px 0;
-      border-bottom: 1px dashed rgba(0,0,0,.08);
-    }
-    .info .row:last-child{ border-bottom:0; }
-    .label{ opacity:.75; }
-
-    .map{
-      height: 360px;
-      width: 100%;
-      border:0;
-      display:block;
-    }
-
-    .footer-actions{
-      display:flex;
-      justify-content:center;
-      gap: 10px;
-      flex-wrap: wrap;
-      padding: 0 18px 18px;
-    }
-
-    .tiny{
-      font-size: 12px;
-      opacity:.6;
-      text-align:center;
-      padding: 0 18px 18px;
-    }
-  </style>
+.map{
+  width:100%;
+  height:300px;
+  border:0;
+  margin-top:20px;
+}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="scene" id="scene">
-      <p class="hint">לחץ על המעטפה לפתיחה</p>
 
-      <button class="envelope-btn" id="openBtn" aria-label="פתח הזמנה">
-        <div class="envelope" id="envelope">
-          <div class="env-body"></div>
+<div class="scene">
+  <div class="envelope" id="envelope">
+    <div class="env-body"></div>
+    <div class="flap"></div>
+    <div class="seal">B</div>
 
-          <div class="letter" aria-hidden="true">
-            <div class="letter-inner">
-              <div class="names">בר & ______</div>
-              <div class="subtitle">מתחתנים!</div>
-              <div class="divider"></div>
+    <div class="letter">
+      <div class="names">בר & שיר</div>
+      <div class="subtitle">שמחים להזמינכם לחגוג איתנו</div>
 
-              <div class="details">
-                <div><b>יום:</b> חמישי</div>
-                <div><b>תאריך:</b> 12.06.2026</div>
-                <div><b>שעה:</b> 19:30</div>
-                <div><b>מקום:</b> אולם ______</div>
-              </div>
-
-              <div class="pill">נשמח לראותך 💛</div>
-
-              <div class="cta-row">
-                <a class="btn primary" href="#invite">לפרטים ומפה</a>
-                <a class="btn ghost" href="https://forms.gle/yourFormLink" target="_blank" rel="noreferrer">אישור הגעה</a>
-              </div>
-            </div>
-          </div>
-
-          <div class="flap"></div>
-          <div class="env-front">
-            <div class="tri-left"></div>
-            <div class="tri-right"></div>
-            <div class="tri-bottom"></div>
-          </div>
-
-          <div class="seal"><span>ב</span></div>
-        </div>
-      </button>
+      <div class="details">
+        יום רביעי<br>
+        20.05.2026<br>
+        אולמי גבריאל, נס ציונה
+      </div>
     </div>
   </div>
+</div>
 
-  <!-- The actual invite section -->
-  <section class="invite" id="invite">
-    <div class="card">
-      <div class="pad">
-        <div class="h1">בר & ______</div>
-        <div class="h2">שמחים להזמינך לחגוג איתנו</div>
-      </div>
+<div class="invite-section" id="invite">
+  <h1>בר & שיר</h1>
+  <h3>שמחים להזמינכם לחתונתנו</h3>
+  <p><strong>20.05.2026</strong></p>
+  <p>אולמי גבריאל, נס ציונה</p>
 
-      <div class="grid">
-        <div class="info">
-          <div class="row"><span class="label">תאריך</span><span><b>12.06.2026</b></span></div>
-          <div class="row"><span class="label">קבלת פנים</span><span><b>19:30</b></span></div>
-          <div class="row"><span class="label">חופה</span><span><b>20:30</b></span></div>
-          <div class="row"><span class="label">מקום</span><span><b>אולם ______, עיר ______</b></span></div>
-          <div class="row"><span class="label">לבוש</span><span><b>אלגנט</b></span></div>
-        </div>
+  <iframe class="map"
+  src="https://www.google.com/maps?q=אולמי+גבריאל+נס+ציונה&output=embed">
+  </iframe>
+</div>
 
-        <!-- Google Maps embed: replace the src with your venue embed -->
-        <div class="card" style="border-radius:16px; overflow:hidden;">
-          <iframe
-            class="map"
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3381.224!2d34.7818!3d32.0853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zVGVsIEF2aXY!5e0!3m2!1siw!2sil!4v0000000000000">
-          </iframe>
-        </div>
-      </div>
+<script>
+const envelope = document.getElementById("envelope");
+const invite = document.getElementById("invite");
 
-      <div class="footer-actions">
-        <a class="btn primary" href="https://waze.com/ul?ll=32.0853,34.7818&navigate=yes" target="_blank" rel="noreferrer">ניווט ב-Waze</a>
-        <a class="btn ghost" href="https://forms.gle/yourFormLink" target="_blank" rel="noreferrer">אישור הגעה</a>
-        <button class="btn ghost" id="copyLinkBtn" type="button">העתק קישור</button>
-      </div>
+envelope.addEventListener("click", () => {
+  envelope.classList.add("open");
+  setTimeout(() => {
+    invite.classList.add("show-invite");
+  }, 1000);
+});
+</script>
 
-      <div class="tiny">טיפ: אפשר לשנות צבעים, טקסטים, ואפילו להוסיף תמונה זוגית למעלה.</div>
-    </div>
-  </section>
-
-  <script>
-    const envelope = document.getElementById('envelope');
-    const openBtn = document.getElementById('openBtn');
-    const invite = document.getElementById('invite');
-    const copyBtn = document.getElementById('copyLinkBtn');
-
-    function openEnvelope(){
-      envelope.classList.add('open');
-      // reveal invite section after animation begins
-      setTimeout(() => invite.classList.add('show'), 650);
-      // smooth scroll to invite after full open
-      setTimeout(() => {
-        document.getElementById('invite').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 1050);
-    }
-
-    openBtn.addEventListener('click', () => {
-      if (!envelope.classList.contains('open')) openEnvelope();
-    });
-
-    // copy link
-    copyBtn?.addEventListener('click', async () => {
-      try{
-        await navigator.clipboard.writeText(window.location.href);
-        copyBtn.textContent = 'הועתק ✅';
-        setTimeout(() => (copyBtn.textContent = 'העתק קישור'), 1400);
-      }catch(e){
-        alert('לא הצלחתי להעתיק. אפשר להעתיק ידנית משורת הכתובת.');
-      }
-    });
-  </script>
 </body>
 </html>
